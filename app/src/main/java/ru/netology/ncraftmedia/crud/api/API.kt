@@ -2,6 +2,8 @@ package ru.netology.ncraftmedia.crud.api
 
 import retrofit2.Response
 import retrofit2.http.*
+import ru.netology.ncraftmedia.crud.dto.CounterChange
+import ru.netology.ncraftmedia.crud.dto.Post
 import ru.netology.ncraftmedia.crud.dto.PostModel
 
 // Данные для авторизации
@@ -12,10 +14,6 @@ data class Token(val token: String)
 
 // Данные для регистрации
 data class RegistrationRequestParams(val username: String, val password: String)
-
-// Данные для создания поста (для новых постов id=0)
-data class CreatePostRequest(val id: Long = 0, val content: String)
-
 
 // тип поста автоматически определяется на базе sourceId и link
 data class PostRequest(
@@ -36,14 +34,11 @@ interface API {
   suspend fun register(@Body registrationRequestParams: RegistrationRequestParams): Response<Token>
 
   @POST("api/v1/posts")
-  suspend fun createPost(@Body createPostRequest: CreatePostRequest): Response<Void>
+  suspend fun createPost(@Body post: Post): Response<Void>
 
   @GET("api/v1/posts")
-  suspend fun getPosts(): Response<List<PostModel>>
+  suspend fun getPosts(): Response<List<Post>>
 
-  @POST("api/v1/posts/{id}/likes")
-  suspend fun likedByMe(@Path("id") id: Long): Response<PostModel>
-
-  @DELETE("api/v1/posts/{id}/likes")
-  suspend fun cancelMyLike(@Path("id") id: Long): Response<PostModel>
+  @POST("api/v1/posts/changeCounter")
+  suspend fun changeCounter(@Body counterChange: CounterChange): Post
 }

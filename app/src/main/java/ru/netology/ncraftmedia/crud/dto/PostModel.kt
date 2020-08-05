@@ -6,12 +6,8 @@ enum class AttachmentType {
 
 data class AttachmentModel(val id: String, val url: String, val type: AttachmentType)
 
-enum class PostType {
-  POST, REPOST
-}
-
 data class PostModel(
-  val id: Long,
+  val id: Int,
   val source: PostModel? = null,
   val ownerId: Long,
   val ownerName: String,
@@ -22,7 +18,7 @@ data class PostModel(
   val reposts: Int = 0,
   val repostedByMe: Boolean = false,
   val link: String? = null,
-  val type: PostType = PostType.POST,
+  val type: PostType = PostType.Post,
   val attachment: AttachmentModel?
 ) {
   var likeActionPerforming = false

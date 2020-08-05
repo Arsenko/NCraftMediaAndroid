@@ -38,7 +38,7 @@ class RegistrationActivity : AppCompatActivity() {
           dialog?.dismiss()
           if (response.isSuccessful) {
             toast(getString(R.string.success))
-            setUserAuth(response.body()!!.token)
+            setUserAuth(response.body()!!.token, edt_registration_login.text.toString())
             finish()
           } else {
             toast(getString(R.string.registration_failed))
@@ -48,9 +48,10 @@ class RegistrationActivity : AppCompatActivity() {
     }
   }
 
-  private fun setUserAuth(token: String) =
+  private fun setUserAuth(token: String, login: String) =
     getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE)
       .edit()
       .putString(AUTHENTICATED_SHARED_KEY, token)
+      .putString(USER_NAME, login)
       .commit()
 }

@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             dialog?.dismiss()
             if (response.isSuccessful) {
               toast(R.string.success)
-              setUserAuth(response.body()!!.token)
+              setUserAuth(response.body()!!.token,edt_login.text.toString())
               Repository.createRetrofitWithAuth(response.body()!!.token)
               start<FeedActivity>()
               finish()
@@ -80,9 +80,10 @@ class MainActivity : AppCompatActivity() {
       AUTHENTICATED_SHARED_KEY, ""
     )?.isNotEmpty() ?: false
 
-  private fun setUserAuth(token: String) =
+  private fun setUserAuth(token: String, login: String) =
     getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE)
       .edit()
       .putString(AUTHENTICATED_SHARED_KEY, token)
+      .putString(USER_NAME, login)
       .commit()
 }
