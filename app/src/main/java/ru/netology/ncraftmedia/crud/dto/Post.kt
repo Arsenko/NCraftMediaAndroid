@@ -27,11 +27,4 @@ data class Post(
 
     fun shareChange(counter:Int) : Post =
         copy(shareCounter = counter)
-
-    var likeActionPerforming = false
-    fun updateLikes(updatedModel: PostModel) {
-        if (id != updatedModel.id) throw IllegalAccessException("Ids are different")
-        likeCounter = updatedModel.likes
-        likedByMe = updatedModel.likedByMe
-    }
 }

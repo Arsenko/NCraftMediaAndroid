@@ -18,6 +18,7 @@ import splitties.toast.toast
 class FeedActivity : AppCompatActivity(),
     PostAdapter.OnLikeBtnClickListener,
     PostAdapter.OnShareBtnClickListener {
+    private var likeClickable=true
     private var dialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,14 +39,14 @@ class FeedActivity : AppCompatActivity(),
                 setProgressBarIndeterminate(true)
                 show()
             }
-            var result:Response<MutableList<Post>>?=null
+            var result: Response<MutableList<Post>>? = null
             try {
                 result = Repository.getPosts()
             } catch (e: Exception) {
                 toast(R.string.error_occured)
             }
             dialog?.dismiss()
-            if(result!=null) {
+            if (result != null) {
                 if (result.isSuccessful) {
                     with(container) {
                         layoutManager = LinearLayoutManager(this@FeedActivity)
@@ -64,13 +65,17 @@ class FeedActivity : AppCompatActivity(),
     override fun onLikeBtnClicked(item: Post, position: Int, list: MutableList<Post>) {
         lifecycleScope.launch {
             with(container) {
-                adapter?.notifyItemChanged(position)
-                try {
-                    list[position] = Repository.likeChange(item)
-                } catch (e: Exception) {
-                    toast(R.string.error_occured)
+                if (likeClickable) {
+                    adapter?.notifyItemChanged(position)
+                    try {
+                        likeClickable = false
+                        list[position] = Repository.likeChange(item)
+                        likeClickable = true
+                    } catch (e: Exception) {
+                        toast(R.string.error_occured)
+                    }
+                    adapter?.notifyItemChanged(position)
                 }
-                adapter?.notifyItemChanged(position)
             }
         }
     }
