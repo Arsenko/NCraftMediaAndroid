@@ -35,7 +35,7 @@ class CreatePostActivity : AppCompatActivity() {
                 }
                 try {
                     lateinit var result: Response<Void>
-                    if(intent.hasExtra("id")){
+                    if (intent.hasExtra("id")) {
                         result = Repository.createPost(
                             Post(
                                 null,
@@ -48,22 +48,7 @@ class CreatePostActivity : AppCompatActivity() {
                                 null,
                                 contentEdt.text.toString(),
                                 Date(),
-                                    Post(
-                                        intent.getIntExtra("id",0),
-                                        intent.getStringExtra("authorName"),
-                                        intent.getIntExtra("authorDrawable",0),
-                                        intent.getStringExtra("bodyText"),
-                                        intent.getSerializableExtra("postDate") as Date,
-                                        null,
-                                        intent.getSerializableExtra("postType") as PostType,
-                                        0,
-                                        false,
-                                        0,
-                                        0,
-                                        null,
-                                        null,
-                                        intent.getIntExtra("postImage",0)
-                                    ),
+                                getMainPostFromIntent(),
                                 PostType.Post,
                                 0,
                                 false,
@@ -74,7 +59,7 @@ class CreatePostActivity : AppCompatActivity() {
                                 null
                             )
                         )
-                    }else {
+                    } else {
                         result = Repository.createPost(
                             Post(
                                 null,
@@ -126,5 +111,24 @@ class CreatePostActivity : AppCompatActivity() {
 
     private fun handleFailedResult() {
         toast(R.string.error_occured)
+    }
+
+    private fun getMainPostFromIntent(): Post {
+        return Post(
+            intent.getIntExtra("id", 0),
+            intent.getStringExtra("authorName"),
+            intent.getIntExtra("authorDrawable", 0),
+            intent.getStringExtra("bodyText"),
+            intent.getSerializableExtra("postDate") as Date,
+            null,
+            intent.getSerializableExtra("postType") as PostType,
+            0,
+            false,
+            0,
+            0,
+            null,
+            null,
+            intent.getIntExtra("postImage", 0)
+        )
     }
 }

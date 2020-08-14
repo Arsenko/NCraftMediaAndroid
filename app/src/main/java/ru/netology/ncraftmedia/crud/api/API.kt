@@ -4,7 +4,6 @@ import retrofit2.Response
 import retrofit2.http.*
 import ru.netology.ncraftmedia.crud.dto.CounterChange
 import ru.netology.ncraftmedia.crud.dto.Post
-import ru.netology.ncraftmedia.crud.dto.PostModel
 
 // Данные для авторизации
 data class AuthRequestParams(val username: String, val password: String)
@@ -37,7 +36,7 @@ interface API {
   suspend fun createPost(@Body post: Post): Response<Void>
 
   @GET("api/v1/posts")
-  suspend fun getPosts(): Response<List<Post>>
+  suspend fun getPosts(): Response<MutableList<Post>>
 
   @POST("api/v1/posts/changeCounter")
   suspend fun changeCounter(@Body counterChange: CounterChange): Post

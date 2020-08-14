@@ -1,7 +1,5 @@
 package ru.netology.ncraftmedia.crud
 
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -61,23 +59,23 @@ object Repository {
 
     suspend fun getPosts() = API.getPosts()
 
-    suspend fun likeChange(item: Post){
+    suspend fun likeChange(item: Post):Post{
         if (item.likedByMe) {
             item.likedByMe=false
-            API.changeCounter(
-                item.id?.let { CounterChange(it, item.likeCounter--, CounterType.Like) }!!
+            return API.changeCounter(
+                item.id?.let { CounterChange(it, false, CounterType.Like) }!!
             )
         } else {
             item.likedByMe=true
-            API.changeCounter(
-                item.id?.let { CounterChange(it, item.likeCounter++, CounterType.Like) }!!
+            return API.changeCounter(
+                item.id?.let { CounterChange(it, true, CounterType.Like) }!!
             )
         }
     }
 
     suspend fun shareChange(item: Post) {
         API.changeCounter(
-            item.id?.let{ CounterChange(it, item.shareCounter++,CounterType.Share) }!!
+            item.id?.let{ CounterChange(it, true, CounterType.Share) }!!
         )
     }
 }

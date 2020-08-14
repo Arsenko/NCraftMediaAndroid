@@ -8,22 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_post.view.*
-import kotlinx.coroutines.NonCancellable.start
 import ru.netology.ncraftmedia.R
-import ru.netology.ncraftmedia.crud.CreatePostActivity
-import ru.netology.ncraftmedia.crud.Repository
 import ru.netology.ncraftmedia.crud.dto.Post
 import ru.netology.ncraftmedia.crud.dto.PostType
-import splitties.activities.startActivity
 import java.text.SimpleDateFormat
 
-class PostAdapter(val list: List<Post>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PostAdapter(val list: MutableList<Post>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var likeBtnClickListener: OnLikeBtnClickListener? = null
     var shareBtnClickListener: OnShareBtnClickListener? = null
 
@@ -43,10 +38,10 @@ class PostAdapter(val list: List<Post>) : RecyclerView.Adapter<RecyclerView.View
     }
 
     interface OnLikeBtnClickListener {
-        fun onLikeBtnClicked(item: Post, position: Int)
+        fun onLikeBtnClicked(item: Post, position: Int,list: MutableList<Post>)
     }
     interface OnShareBtnClickListener {
-        fun onShareBtnClicked(item: Post, position: Int)
+        fun onShareBtnClicked(item: Post, position: Int,list: MutableList<Post>)
     }
 }
 
@@ -58,14 +53,14 @@ class PostViewHolder(val adapter: PostAdapter, view: View) : RecyclerView.ViewHo
                 val currentPosition = adapterPosition
                 if (currentPosition != RecyclerView.NO_POSITION) {
                     val item = adapter.list[currentPosition]
-                    adapter.likeBtnClickListener?.onLikeBtnClicked(item, currentPosition)
+                    adapter.likeBtnClickListener?.onLikeBtnClicked(item,currentPosition,adapter.list)
                 }
             }
             shareBtn.setOnClickListener {
                 val currentPosition = adapterPosition
                 if (currentPosition != RecyclerView.NO_POSITION) {
                     val item = adapter.list[currentPosition]
-                    adapter.shareBtnClickListener?.onShareBtnClicked(item, currentPosition)
+                    adapter.shareBtnClickListener?.onShareBtnClicked(item,currentPosition,adapter.list)
                 }
             }
         }

@@ -13,77 +13,77 @@ import splitties.toast.toast
 
 class MainActivity : AppCompatActivity() {
 
-  private var dialog: ProgressDialog? = null
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    private var dialog: ProgressDialog? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    if (isAuthenticated()) {
-      val token = getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE).getString(
-        AUTHENTICATED_SHARED_KEY, ""
-      )
-      Repository.createRetrofitWithAuth(token!!)
-      start<FeedActivity>()
-      finish()
-    } else {
-      btn_login.setOnClickListener {
-        if (!isValid(edt_password.text.toString())) {
-          edt_password.error = "Password is incorrect"
+        if (isAuthenticated()) {
+            val token = getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE).getString(
+                AUTHENTICATED_SHARED_KEY, ""
+            )
+            Repository.createRetrofitWithAuth(token!!)
+            start<FeedActivity>()
+            finish()
         } else {
-          lifecycleScope.launch {
-            dialog = ProgressDialog(this@MainActivity).apply {
-              setMessage(this@MainActivity.getString(R.string.please_wait))
-              setTitle(R.string.authentication)
-              setCancelable(false)
-              setProgressBarIndeterminate(true)
-              show()
+            btn_login.setOnClickListener {
+                if (!isValid(edt_password.text.toString())) {
+                    edt_password.error = "Password is incorrect"
+                } else {
+                    lifecycleScope.launch {
+                        dialog = ProgressDialog(this@MainActivity).apply {
+                            setMessage(this@MainActivity.getString(R.string.please_wait))
+                            setTitle(R.string.authentication)
+                            setCancelable(false)
+                            setProgressBarIndeterminate(true)
+                            show()
+                        }
+                        val response =
+                            Repository.authenticate(
+                                edt_login.text.toString(),
+                                edt_password.text.toString()
+                            )
+                        dialog?.dismiss()
+                        if (response.isSuccessful) {
+                            toast(R.string.success)
+                            setUserAuth(response.body()!!.token, edt_login.text.toString())
+                            Repository.createRetrofitWithAuth(response.body()!!.token)
+                            start<FeedActivity>()
+                            finish()
+                        } else {
+                            toast(R.string.authentication_failed)
+                        }
+                    }
+                }
             }
-            val response =
-              Repository.authenticate(
-                edt_login.text.toString(),
-                edt_password.text.toString()
-              )
-            dialog?.dismiss()
-            if (response.isSuccessful) {
-              toast(R.string.success)
-              setUserAuth(response.body()!!.token,edt_login.text.toString())
-              Repository.createRetrofitWithAuth(response.body()!!.token)
-              start<FeedActivity>()
-              finish()
-            } else {
-              toast(R.string.authentication_failed)
-            }
-          }
         }
-      }
+
+        btn_registration.setOnClickListener {
+            start<RegistrationActivity>()
+        }
     }
 
-    btn_registration.setOnClickListener {
-      start<RegistrationActivity>()
+    override fun onStart() {
+        super.onStart()
+        if (isAuthenticated()) {
+            val token = getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE).getString(
+                AUTHENTICATED_SHARED_KEY, ""
+            )
+            Repository.createRetrofitWithAuth(token!!)
+            start<FeedActivity>()
+            finish()
+        }
     }
-  }
 
-  override fun onStart() {
-    super.onStart()
-    if (isAuthenticated()) {
-      val token = getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE).getString(
-        AUTHENTICATED_SHARED_KEY, ""
-      )
-      Repository.createRetrofitWithAuth(token!!)
-      start<FeedActivity>()
-      finish()
-    }
-  }
+    private fun isAuthenticated() =
+        getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE).getString(
+            AUTHENTICATED_SHARED_KEY, ""
+        )?.isNotEmpty() ?: false
 
-  private fun isAuthenticated() =
-    getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE).getString(
-      AUTHENTICATED_SHARED_KEY, ""
-    )?.isNotEmpty() ?: false
-
-  private fun setUserAuth(token: String, login: String) =
-    getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE)
-      .edit()
-      .putString(AUTHENTICATED_SHARED_KEY, token)
-      .putString(USER_NAME, login)
-      .commit()
+    private fun setUserAuth(token: String, login: String) =
+        getSharedPreferences(API_SHARED_FILE, Context.MODE_PRIVATE)
+            .edit()
+            .putString(AUTHENTICATED_SHARED_KEY, token)
+            .putString(USER_NAME, login)
+            .commit()
 }
